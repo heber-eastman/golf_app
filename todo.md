@@ -63,18 +63,18 @@
 ---
 
 ## 5 · CSV Upload & Import
-- [ ] Admin‑only POST `/admin/upload`
-- [ ] Multer/multipart handling
-- [ ] Validate header: `courseId,courseName,teeTime,holes,pricePerPlayer,availableSlots`
-- [ ] Stream parse with `fast-csv`
-- [ ] Row‑level validation
-- [ ] Replace logic (delete & insert matching `courseId+teeTime`)
-- [ ] Deduplicate identical rows silently
-- [ ] Skip malformed rows; accumulate errors
-- [ ] Save `UploadBatch` summary
-- [ ] Response JSON stats
-- [ ] Alert job: missing upload by 12 PM MT
-- [ ] Tests: happy‑path, bad row skipped, duplicate row
+- [x] Admin‑only POST `/admin/upload`
+- [x] Multer/multipart handling
+- [x] Validate header: `courseId,courseName,teeTime,holes,pricePerPlayer,availableSlots`
+- [x] Stream parse with `fast-csv`
+- [x] Row‑level validation
+- [x] Replace logic (delete & insert matching `courseId+teeTime`)
+- [x] Deduplicate identical rows silently
+- [x] Skip malformed rows; accumulate errors
+- [x] Save `UploadBatch` summary
+- [x] Response JSON stats
+- [x] Alert job: missing upload by 12 PM MT
+- [x] Tests: happy‑path, bad row skipped, duplicate row
 
 ---
 
