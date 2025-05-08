@@ -18,5 +18,19 @@ module.exports = {
     'import/prefer-default-export': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    'react/jsx-filename-extension': 'off',
+    'import/extensions': 'off',
+    'import/no-extraneous-dependencies': 'off',
   },
+  overrides: [
+    {
+      files: ['**/*.tsx'],
+      extends: ['plugin:react/recommended'],
+      settings: {
+        react: {
+          version: 'detect',
+        },
+      },
+    },
+  ],
 }; 
