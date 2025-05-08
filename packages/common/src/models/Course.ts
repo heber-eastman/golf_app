@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 export interface ICourse {
+  _id?: mongoose.Types.ObjectId;
   name: string;
   bookingUrl: string;
   address: string;

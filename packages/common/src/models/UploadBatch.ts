@@ -1,29 +1,46 @@
 import mongoose from 'mongoose';
 
 export interface IUploadBatch {
-  courseId: mongoose.Types.ObjectId;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  totalRecords: number;
-  processedRecords: number;
-  errorCount: number;
-  errors: string[];
-  startedAt: Date;
-  completedAt?: Date;
+  _id?: mongoose.Types.ObjectId;
+  uploadedBy: mongoose.Types.ObjectId;
+  importedCount: number;
+  skippedCount: number;
+  validationErrors: Array<{
+    row: number;
+    message: string;
+  }>;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const uploadBatchSchema = new mongoose.Schema<IUploadBatch>({
-  courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
-  status: { 
-    type: String, 
-    enum: ['pending', 'processing', 'completed', 'failed'],
-    default: 'pending'
+  uploadedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
-  totalRecords: { type: Number, required: true, min: 0 },
-  processedRecords: { type: Number, required: true, min: 0, default: 0 },
-  errorCount: { type: Number, required: true, min: 0, default: 0 },
-  errors: [{ type: String }],
-  startedAt: { type: Date, default: Date.now },
-  completedAt: { type: Date },
+  importedCount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  skippedCount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  validationErrors: [{
+    row: {
+      type: Number,
+      required: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
+  }],
+}, {
+  timestamps: true,
 });
 
 export const UploadBatch = mongoose.model<IUploadBatch>('UploadBatch', uploadBatchSchema); 
