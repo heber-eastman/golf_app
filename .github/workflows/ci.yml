@@ -22,7 +22,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
         cache-dependency-path: package-lock.json
     
@@ -30,6 +30,7 @@ jobs:
       run: |
         cd packages/common
         npm ci --legacy-peer-deps
+        npm i mongodb-memory-server --save-dev
         npm run build
         cd ../../apps/api
         npm ci --legacy-peer-deps
