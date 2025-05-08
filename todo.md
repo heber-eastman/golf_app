@@ -26,16 +26,16 @@
 
 ---
 
-## 2 · Backend Skeleton ⚑
-- [ ] Workspace `apps/api` (TypeScript)
-- [ ] Express server (`src/server.ts`)
-- [ ] Env loader + `PORT` default 3000
-- [ ] `/health` route
-- [ ] Error‑handling middleware
-- [ ] Supertest integration test
-- [ ] Dockerfile (api)
-- [ ] docker‑compose (api + mongo stub)
-- [ ] CI updated to spin compose
+## 2 · Backend Skeleton ⚑
+- [x] Workspace `apps/api` (TypeScript)
+- [x] Express server (`src/server.ts`)
+- [x] Env loader + `PORT` default 3000
+- [x] `/health` route
+- [x] Error‑handling middleware
+- [x] Supertest integration test
+- [x] Dockerfile (api)
+- [x] docker‑compose (api + mongo stub)
+- [x] CI updated to spin compose
 
 ---
 
