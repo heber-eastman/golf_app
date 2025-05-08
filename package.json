@@ -8,7 +8,8 @@
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "test": "jest",
+    "test": "jest --config jest.config.js",
+    "dev:api": "cd apps/api && npm run dev",
     "prepare": "husky"
   },
   "devDependencies": {
