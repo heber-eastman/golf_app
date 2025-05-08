@@ -1,9 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import morgan from 'morgan';
+import passport from './config/passport';
+import authRoutes from './routes/auth';
+import { errorHandler } from './middleware/error';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,21 +12,19 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(helmet());
 app.use(cors());
+app.use(morgan('dev'));
 app.use(express.json());
+app.use(passport.initialize());
 
 // Routes
+app.use('/auth', authRoutes);
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Error handling middleware
-app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({
-    error: 'Internal Server Error',
-    message: process.env.NODE_ENV === 'development' ? err.message : undefined,
-  });
-});
+// Error handling
+app.use(errorHandler);
 
 // 404 handler
 app.use((req: express.Request, res: express.Response) => {

@@ -52,13 +52,13 @@
 ---
 
 ## 4 · Auth & Sessions
-- [ ] Google OAuth (passport)  
-  - [ ] `/auth/google` & callback
-- [ ] Apple OAuth
-- [ ] JWT issue (1 yr) + refresh token store
-- [ ] `requireAuth` middleware
-- [ ] `/me` protected route
-- [ ] Auth integration tests
+- [x] Google OAuth (passport)  
+  - [x] `/auth/google` & callback
+- [x] Apple OAuth
+- [x] JWT issue (1 yr) + refresh token store
+- [x] `requireAuth` middleware
+- [x] `/me` protected route
+- [x] Auth integration tests
 
 ---
 

@@ -3,13 +3,14 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": ".",
-    "composite": true
+    "baseUrl": ".",
+    "paths": {
+      "@golf-app/common": ["../../packages/common/dist"]
+    }
   },
   "include": ["src/**/*", "__tests__/**/*"],
   "exclude": ["node_modules", "dist"],
   "references": [
-    {
-      "path": "../../packages/common"
-    }
+    { "path": "../../packages/common" }
   ]
 } 
