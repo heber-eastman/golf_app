@@ -30,7 +30,7 @@ jobs:
 
     - name: Start MongoDB
       run: |
-        docker-compose up -d
+        docker-compose up -d mongo
         # Wait for MongoDB to be ready
         timeout 30s bash -c 'until nc -z localhost 27017; do sleep 1; done'
 
