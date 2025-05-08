@@ -29,10 +29,10 @@ jobs:
     - name: Install dependencies
       run: |
         cd packages/common
-        npm ci
+        npm ci --legacy-peer-deps
         npm run build
         cd ../../apps/api
-        npm ci
+        npm ci --legacy-peer-deps
     
     - name: Run tests
       run: |
