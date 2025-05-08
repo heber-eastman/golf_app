@@ -38,3 +38,22 @@
 2025-05-08T21:17:26.670596Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@golf-app/common"), path: AnchoredSystemPathBuf("packages/common") }, WorkspacePackage { name: Other("@golf-app/api"), path: AnchoredSystemPathBuf("apps/api") }}))
 2025-05-08T21:17:32.170419Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps/api/tsconfig.json")}
 2025-05-08T21:17:32.170427Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@golf-app/api"), path: AnchoredSystemPathBuf("apps/api") }}))
+2025-05-08T21:17:39.471429Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo/cookies/10.cookie"), AnchoredSystemPathBuf(".turbo/cookies/12.cookie"), AnchoredSystemPathBuf(".turbo/cookies/11.cookie"), AnchoredSystemPathBuf("packages/common/.turbo/turbo-lint.log"), AnchoredSystemPathBuf("apps/api/.turbo/turbo-lint.log")}
+2025-05-08T21:17:39.471437Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@golf-app/common"), path: AnchoredSystemPathBuf("packages/common") }, WorkspacePackage { name: Other("@golf-app/api"), path: AnchoredSystemPathBuf("apps/api") }, WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-08T21:17:41.570826Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo/cookies/13.cookie"), AnchoredSystemPathBuf("apps/api/.turbo/turbo-lint.log")}
+2025-05-08T21:17:41.570839Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("@golf-app/api"), path: AnchoredSystemPathBuf("apps/api") }}))
+2025-05-08T21:17:41.671100Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/common/.turbo/turbo-lint.log"), AnchoredSystemPathBuf(".turbo/cookies/14.cookie")}
+2025-05-08T21:17:41.671108Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("@golf-app/common"), path: AnchoredSystemPathBuf("packages/common") }}))
+2025-05-08T21:17:56.771593Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package.json")}
+2025-05-08T21:17:56.771610Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(All)
+2025-05-08T21:18:06.172345Z  WARN turborepo_lib::package_changes_watcher: file event lagged
+2025-05-08T21:18:06.172394Z  WARN turborepo_filewatch::package_watcher: lagged behind 138 processing file watching events
+2025-05-08T21:18:06.172573Z  WARN turborepo_lib::package_changes_watcher: file event lagged
+2025-05-08T21:18:06.172640Z  WARN turborepo_filewatch::package_watcher: lagged behind 96 processing file watching events
+2025-05-08T21:18:06.182803Z  WARN turborepo_filewatch::package_watcher: lagged behind 161 processing file watching events
+2025-05-08T21:18:06.192990Z  WARN turborepo_filewatch::package_watcher: lagged behind 79 processing file watching events
+2025-05-08T21:18:06.202756Z  WARN turborepo_filewatch::globwatcher: encountered filewatching error, flushing all globs: channel lagged by 5
+2025-05-08T21:18:06.203029Z  WARN turborepo_filewatch::package_watcher: lagged behind 118 processing file watching events
+2025-05-08T21:18:06.213244Z  WARN turborepo_filewatch::package_watcher: lagged behind 13 processing file watching events
+2025-05-08T21:18:06.671695Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("package-lock.json")}
+2025-05-08T21:18:06.671705Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
