@@ -39,7 +39,7 @@
 
 ---
 
-## 3 · Database & Models ⚑
+## 3 · Database & Models ⚑
 - [ ] `packages/common` Mongoose connection
 - [ ] Schemas  
   - [ ] User  
@@ -51,7 +51,7 @@
 
 ---
 
-## 4 · Auth & Sessions
+## 4 · Auth & Sessions
 - [ ] Google OAuth (passport)  
   - [ ] `/auth/google` & callback
 - [ ] Apple OAuth
@@ -62,7 +62,7 @@
 
 ---
 
-## 5 · CSV Upload & Import
+## 5 · CSV Upload & Import
 - [ ] Admin‑only POST `/admin/upload`
 - [ ] Multer/multipart handling
 - [ ] Validate header: `courseId,courseName,teeTime,holes,pricePerPlayer,availableSlots`
@@ -78,7 +78,7 @@
 
 ---
 
-## 6 · /​search API
+## 6 · /​search API
 - [ ] GET `/search` params: `date`, `courseId?`, `maxPrice?`, `slots?`, `startTime?`, `endTime?`, `cursor?`
 - [ ] Zod validation
 - [ ] Query TeeTime collection; filters
@@ -88,7 +88,7 @@
 
 ---
 
-## 7 · Push Notifications
+## 7 · Push Notifications
 - [ ] Firebase Cloud Messaging setup
 - [ ] Device token model + registration route
 - [ ] `NotificationPref` schema
@@ -99,7 +99,7 @@
 
 ---
 
-## 8 · React Native Mobile App ⚑
+## 8 · React Native Mobile App ⚑
 - [ ] Workspace `apps/mobile` (Expo TypeScript)
 - [ ] Shared ESLint/Prettier
 - [ ] Google sign‑in flow
@@ -116,7 +116,7 @@
 
 ---
 
-## 9 · Admin Dashboard
+## 9 · Admin Dashboard
 - [ ] Workspace `apps/admin` (Next.js)
 - [ ] Login page (username/password env)
 - [ ] Upload page  
@@ -130,7 +130,7 @@
 
 ---
 
-## 10 · Hardening & House‑Keeping
+## 10 · Hardening & House‑Keeping
 - [ ] Winston JSON logger
 - [ ] Nightly purge job  
   - [ ] Delete TeeTimes < today  
@@ -142,7 +142,7 @@
 
 ---
 
-## 11 · Beta & Release
+## 11 · Beta & Release
 - [ ] Staging infra (Docker/Fly.io/k8s)
 - [ ] CI → CD to staging
 - [ ] TestFlight & Google Play Internal builds
@@ -152,7 +152,7 @@
 
 ---
 
-## 12 · Maintenance
+## 12 · Maintenance
 - [ ] Weekly dep audit (Dependabot)
 - [ ] Monthly security review
 - [ ] Update docs (`CONTRIBUTING.md`, API ref)
