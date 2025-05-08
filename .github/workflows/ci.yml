@@ -29,7 +29,7 @@ jobs:
       run: npm run lint
 
     - name: Run tests with coverage
-      run: npm test -- --coverage
+      run: docker-compose up -d && npm test
 
     - name: Upload coverage artifacts
       uses: actions/upload-artifact@v4
