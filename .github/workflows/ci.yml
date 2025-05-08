@@ -15,6 +15,11 @@ jobs:
         image: mongo:7.0
         ports:
           - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand(\"ping\").ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - uses: actions/checkout@v4
@@ -29,27 +34,54 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm ci
+      run: |
+        npm ci
+        npm run build --workspace=packages/common
+
+    - name: Cache common package build
+      uses: actions/cache@v4
+      with:
+        path: packages/common/dist
+        key: ${{ runner.os }}-common-build-${{ hashFiles('packages/common/package.json', 'packages/common/tsconfig.json') }}
+        restore-keys: |
+          ${{ runner.os }}-common-build-
 
     - name: Run linting
       run: npm run lint
 
-    - name: Build common package
-      run: cd packages/common && npm run build
-
-    - name: Install netcat
-      run: sudo apt-get update && sudo apt-get install -y netcat
+    - name: Setup test environment
+      run: |
+        echo "NODE_ENV=test" >> $GITHUB_ENV
+        echo "MONGODB_URI=mongodb://localhost:27017/test" >> $GITHUB_ENV
+        echo "JWT_SECRET=test-jwt-secret-key-min-32-chars-long" >> $GITHUB_ENV
+        echo "JWT_EXPIRES_IN=1h" >> $GITHUB_ENV
 
     - name: Wait for MongoDB
       run: |
-        timeout 30s bash -c 'until nc -z localhost 27017; do sleep 1; done'
+        timeout 30s bash -c 'until mongosh --eval "db.runCommand(\"ping\").ok" --quiet; do sleep 1; done'
 
     - name: Run tests with coverage
-      run: npm test
+      run: |
+        npm test -- --coverage --verbose
+      env:
+        NODE_ENV: test
+        MONGODB_URI: mongodb://localhost:27017/test
+        JWT_SECRET: test-jwt-secret-key-min-32-chars-long
+        JWT_EXPIRES_IN: 1h
 
     - name: Upload coverage artifacts
       uses: actions/upload-artifact@v4
       with:
         name: coverage
         path: coverage/
+        retention-days: 7
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          apps/api/jest-results.json
+          apps/api/coverage/
         retention-days: 7 
