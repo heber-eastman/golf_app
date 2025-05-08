@@ -5,7 +5,8 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.test.ts'],
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
-      isolatedModules: true
+      isolatedModules: true,
+      tsconfig: 'tsconfig.json'
     }]
   },
   coverageDirectory: 'coverage',
