@@ -1,29 +1,38 @@
-import mongoose from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
-export interface IUser {
+export interface IUser extends Document {
   email: string;
   name: string;
-  password: string;
-  role: 'admin' | 'user';
+  googleId?: string;
+  appleId?: string;
+  refreshToken?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const userSchema = new mongoose.Schema<IUser>({
-  email: { 
-    type: String, 
-    required: true, 
+const userSchema = new Schema<IUser>({
+  email: {
+    type: String,
+    required: true,
     unique: true,
-    validate: {
-      validator: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-      message: 'Invalid email format'
-    }
   },
-  name: { type: String, required: true },
-  password: { type: String, required: true },
-  role: { type: String, enum: ['admin', 'user'], default: 'user' },
+  name: {
+    type: String,
+    required: true,
+  },
+  googleId: {
+    type: String,
+    sparse: true,
+  },
+  appleId: {
+    type: String,
+    sparse: true,
+  },
+  refreshToken: {
+    type: String,
+  },
 }, {
   timestamps: true,
 });
 
-export const User = mongoose.model<IUser>('User', userSchema); 
+export const User = model<IUser>('User', userSchema); 
