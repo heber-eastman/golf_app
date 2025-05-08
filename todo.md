@@ -1,40 +1,40 @@
-# Tee‑Time CSV‑Upload MVP — Master TODO Checklist
+# Tee‑Time CSV‑Upload MVP — Master TODO Checklist
 
 > Mark each task `[ ]` → `[x]` when complete.  
-> Sub‑tasks are indented. ⚑ = may run in parallel.
+> Sub‑tasks are indented. ⚑ = may run in parallel.
 
 ---
 
-## 0 · Project Kick‑off
-- [ ] Select repo host & create **tee‑time** private mono‑repo
-- [ ] Add MIT license & initial `README.md`
+## 0 · Project Kick‑off
+- [x] Select repo host & create **tee‑time** private mono‑repo
+- [x] Add MIT license & initial `README.md`
 
 ---
 
-## 1 · Dev‑Ops Bootstrap
-- [ ] `.gitignore`, `.nvmrc` (LTS)
-- [ ] Root `package.json`   
-  - [ ] Workspaces: `apps/*`, `packages/*`
-  - [ ] Scripts: `lint`, `format`, `test`
-- [ ] ESLint + Prettier (Airbnb TS) config
-- [ ] Husky pre‑commit → `lint --fix && test`
-- [ ] Jest + ts‑jest setup
-- [ ] Placeholder passing test
-- [ ] GitHub Actions CI  
-  - [ ] Install → lint → test → coverage artifact  
-  - [ ] Badge in README
+## 1 · Dev‑Ops Bootstrap
+- [x] `.gitignore`, `.nvmrc` (LTS)
+- [x] Root `package.json`   
+  - [x] Workspaces: `apps/*`, `packages/*`
+  - [x] Scripts: `lint`, `format`, `test`
+- [x] ESLint + Prettier (Airbnb TS) config
+- [x] Husky pre‑commit → `lint --fix && test`
+- [x] Jest + ts‑jest setup
+- [x] Placeholder passing test
+- [x] GitHub Actions CI  
+  - [x] Install → lint → test → coverage artifact  
+  - [x] Badge in README
 
 ---
 
 ## 2 · Backend Skeleton ⚑
 - [ ] Workspace `apps/api` (TypeScript)
 - [ ] Express server (`src/server.ts`)
-- [ ] Env loader + `PORT` default 3000
+- [ ] Env loader + `PORT` default 3000
 - [ ] `/health` route
 - [ ] Error‑handling middleware
 - [ ] Supertest integration test
 - [ ] Dockerfile (api)
-- [ ] docker‑compose (api + mongo stub)
+- [ ] docker‑compose (api + mongo stub)
 - [ ] CI updated to spin compose
 
 ---
@@ -55,7 +55,7 @@
 - [ ] Google OAuth (passport)  
   - [ ] `/auth/google` & callback
 - [ ] Apple OAuth
-- [ ] JWT issue (1 yr) + refresh token store
+- [ ] JWT issue (1 yr) + refresh token store
 - [ ] `requireAuth` middleware
 - [ ] `/me` protected route
 - [ ] Auth integration tests
@@ -73,7 +73,7 @@
 - [ ] Skip malformed rows; accumulate errors
 - [ ] Save `UploadBatch` summary
 - [ ] Response JSON stats
-- [ ] Alert job: missing upload by 12 PM MT
+- [ ] Alert job: missing upload by 12 PM MT
 - [ ] Tests: happy‑path, bad row skipped, duplicate row
 
 ---
@@ -82,7 +82,7 @@
 - [ ] GET `/search` params: `date`, `courseId?`, `maxPrice?`, `slots?`, `startTime?`, `endTime?`, `cursor?`
 - [ ] Zod validation
 - [ ] Query TeeTime collection; filters
-- [ ] Sort ascending, limit 20, `nextCursor`
+- [ ] Sort ascending, limit 20, `nextCursor`
 - [ ] Integration tests with seeded data
 - [ ] Swagger docs updated
 
@@ -93,7 +93,7 @@
 - [ ] Device token model + registration route
 - [ ] `NotificationPref` schema
 - [ ] `/notifications/prefs` CRUD
-- [ ] Worker (5 min) → query new tee‑times → send FCM
+- [ ] Worker (5 min) → query new tee‑times → send FCM
 - [ ] Frequency throttle (immediate/daily/weekly)
 - [ ] Unit tests on worker logic
 
@@ -134,17 +134,17 @@
 - [ ] Winston JSON logger
 - [ ] Nightly purge job  
   - [ ] Delete TeeTimes < today  
-  - [ ] Delete UploadBatch > 30 d
+  - [ ] Delete UploadBatch > 30 d
 - [ ] Global RN error boundary → toast
 - [ ] Detox smoke: login stub → list → WebView
 - [ ] CI step to run Android emulator e2e
-- [ ] Coverage ≥ 80 %
+- [ ] Coverage ≥ 80 %
 
 ---
 
 ## 11 · Beta & Release
 - [ ] Staging infra (Docker/Fly.io/k8s)
-- [ ] CI → CD to staging
+- [ ] CI → CD to staging
 - [ ] TestFlight & Google Play Internal builds
 - [ ] Collect beta feedback
 - [ ] Production store metadata & launch
