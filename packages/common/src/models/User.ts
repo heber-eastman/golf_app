@@ -1,38 +1,40 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface IUser extends Document {
+export interface IUser {
+  _id?: mongoose.Types.ObjectId;
   email: string;
   name: string;
   googleId?: string;
   appleId?: string;
   refreshToken?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  isAdmin?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const userSchema = new Schema<IUser>({
-  email: {
-    type: String,
-    required: true,
+const userSchema = new mongoose.Schema<IUser>({
+  email: { 
+    type: String, 
+    required: true, 
     unique: true,
+    validate: {
+      validator: function(v: string) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      },
+      message: props => `${props.value} is not a valid email address!`
+    }
   },
-  name: {
-    type: String,
-    required: true,
-  },
-  googleId: {
-    type: String,
-    sparse: true,
-  },
-  appleId: {
-    type: String,
-    sparse: true,
-  },
-  refreshToken: {
-    type: String,
-  },
+  name: { type: String, required: true },
+  googleId: { type: String },
+  appleId: { type: String },
+  refreshToken: { type: String },
+  isAdmin: { type: Boolean, default: false },
 }, {
-  timestamps: true,
+  timestamps: true
 });
 
-export const User = model<IUser>('User', userSchema); 
+// Compound indexes for efficient querying
+userSchema.index({ googleId: 1 }, { sparse: true });
+userSchema.index({ appleId: 1 }, { sparse: true });
+
+export const User = mongoose.model<IUser>('User', userSchema); 
