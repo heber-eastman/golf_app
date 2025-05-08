@@ -4,7 +4,9 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import passport from './config/passport';
 import authRoutes from './routes/auth';
+import uploadRoutes from './routes/upload';
 import { errorHandler } from './middleware/error';
+import { startUploadCheckScheduler } from './jobs/adminAlert';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,6 +20,7 @@ app.use(passport.initialize());
 
 // Routes
 app.use('/auth', authRoutes);
+app.use('/admin', uploadRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
@@ -25,6 +28,9 @@ app.get('/health', (req, res) => {
 
 // Error handling
 app.use(errorHandler);
+
+// Start the upload check scheduler
+startUploadCheckScheduler();
 
 // 404 handler
 app.use((req: express.Request, res: express.Response) => {

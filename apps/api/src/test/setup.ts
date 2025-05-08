@@ -18,12 +18,7 @@ beforeAll(async () => {
   mongod = await MongoMemoryServer.create();
   const mongoUri = mongod.getUri();
   await mongoose.connect(mongoUri);
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongod.stop();
-});
+}, 30000); // Increase timeout for setup
 
 afterEach(async () => {
   if (mongoose.connection.db) {
@@ -32,4 +27,9 @@ afterEach(async () => {
       await collection.deleteMany({});
     }
   }
-}); 
+}, 10000); // Add timeout for cleanup
+
+afterAll(async () => {
+  await mongoose.disconnect();
+  await mongod.stop();
+}, 10000); // Add timeout for teardown 
