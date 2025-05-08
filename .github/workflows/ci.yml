@@ -30,7 +30,7 @@ jobs:
       run: |
         cd packages/common
         npm ci --legacy-peer-deps
-        npm i mongodb-memory-server --save-dev
+        npm i mongodb-memory-server --save-dev --force
         npm run build
         cd ../../apps/api
         npm ci --legacy-peer-deps
