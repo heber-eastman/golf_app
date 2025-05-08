@@ -1,0 +1,58 @@
+
+> @golf-app/common@0.1.0 lint
+> eslint . --ext .ts
+
+=============
+
+WARNING: You are currently running a version of TypeScript which is not officially supported by @typescript-eslint/typescript-estree.
+
+You may find that it works just fine, or you may not.
+
+SUPPORTED TYPESCRIPT VERSIONS: >=4.3.5 <5.4.0
+
+YOUR TYPESCRIPT VERSION: 5.8.3
+
+Please only submit bug reports when using the officially supported version.
+
+=============
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/__tests__/sample.spec.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/src/db.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/src/models/Course.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/src/models/TeeTime.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/src/models/UploadBatch.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/src/models/User.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/src/models/__tests__/Course.test.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/src/models/__tests__/TeeTime.test.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/src/models/__tests__/User.test.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/src/models/index.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/packages/common/src/test/setup.ts[24m[0m
+[0m  [2m0:0[22m  [31merror[39m  Parsing error: Cannot read file '/users/heber/documents/codes/golf app v0.1/packages/common/tsconfig.json'[0m
+[0m[0m
+[0m[31m[1m✖ 11 problems (11 errors, 0 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+[37;40mnpm[0m [0m[31;40mERR![0m [0m[35mLifecycle script `lint` failed with error:[0m 
+[0m[37;40mnpm[0m [0m[31;40mERR![0m [0m[35mError: command failed[0m 
+[0m[37;40mnpm[0m [0m[31;40mERR![0m [0m[35m  in workspace: @golf-app/common@0.1.0[0m 
+[0m[37;40mnpm[0m [0m[31;40mERR![0m [0m[35m  at location: /Users/heber/Documents/Codes/Golf App V0.1/packages/common[0m 
+[0m
