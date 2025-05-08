@@ -34,6 +34,9 @@ jobs:
     - name: Run linting
       run: npm run lint
 
+    - name: Build common package
+      run: cd packages/common && npm run build
+
     - name: Install netcat
       run: sudo apt-get update && sudo apt-get install -y netcat
 
