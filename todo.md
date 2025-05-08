@@ -40,14 +40,14 @@
 ---
 
 ## 3 · Database & Models ⚑
-- [ ] `packages/common` Mongoose connection
-- [ ] Schemas  
-  - [ ] User  
-  - [ ] Course  
-  - [ ] TeeTime  
-  - [ ] UploadBatch
-- [ ] Test DB via `mongodb-memory-server`
-- [ ] Unit tests save/retrieve Course & TeeTime
+- [x] `packages/common` Mongoose connection
+- [x] Schemas  
+  - [x] User  
+  - [x] Course  
+  - [x] TeeTime  
+  - [x] UploadBatch
+- [x] Test DB via `mongodb-memory-server`
+- [x] Unit tests save/retrieve Course & TeeTime
 
 ---
 
