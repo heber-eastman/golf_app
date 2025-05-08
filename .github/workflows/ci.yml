@@ -43,6 +43,12 @@ jobs:
         npm run build
         cd ../..
 
+    - name: Install API dependencies
+      run: |
+        cd apps/api
+        npm ci
+        cd ../..
+
     - name: Cache common package build
       uses: actions/cache@v4
       with:
