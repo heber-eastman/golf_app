@@ -5,6 +5,7 @@ node_modules
 
 # Testing
 coverage
+jest-results.json
 
 # Production
 build
@@ -33,4 +34,7 @@ yarn-error.log*
 *.swo
 
 # TypeScript
-*.tsbuildinfo 
+*.tsbuildinfo
+
+# Turbo
+.turbo 
