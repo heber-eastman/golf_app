@@ -45,7 +45,8 @@ router.post('/upload',
   upload.single('file'),
   async (req: UploadRequest, res) => {
     if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+      res.status(400).json({ error: 'No file uploaded' });
+      return;
     }
 
     const batch = new UploadBatch({
@@ -176,12 +177,14 @@ router.post('/upload',
           validationErrors: batch.validationErrors,
         },
       });
+      return;
     } catch (error) {
       console.error('Error processing CSV:', error);
       res.status(500).json({
         error: 'Error processing CSV',
         message: error instanceof Error ? error.message : 'Unknown error',
       });
+      return;
     }
   }
 );

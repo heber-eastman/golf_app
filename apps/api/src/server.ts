@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 import passport from './config/passport';
 import authRoutes from './routes/auth';
 import uploadRoutes from './routes/upload';
@@ -12,15 +14,39 @@ import searchRouter from './routes/search';
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Swagger setup
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Golf App API',
+      version: '1.0.0',
+      description: 'API for managing golf tee times',
+    },
+    servers: [
+      {
+        url: `http://localhost:${port}`,
+        description: 'Development server',
+      },
+    ],
+  },
+  apis: [
+    `${__dirname}/routes/*.ts`,
+    `${__dirname}/swagger.ts`
+  ],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Middleware
 app.use(helmet());
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(passport.initialize());
 
 // Routes
-app.use('/auth', authRoutes);
+app.use('/auth', passport.initialize(), authRoutes);
 app.use('/admin', uploadRoutes);
 app.use('/', searchRouter);
 

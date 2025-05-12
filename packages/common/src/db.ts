@@ -10,12 +10,21 @@ const mongooseOptions = {
   connectTimeoutMS: 10000,
 };
 
+// Test-specific connection options
+const testMongooseOptions = {
+  ...mongooseOptions,
+  serverSelectionTimeoutMS: 2000,
+  connectTimeoutMS: 2000,
+};
+
 export async function connectDB(): Promise<void> {
+  const isTest = process.env.NODE_ENV === 'test';
+  const options = isTest ? testMongooseOptions : mongooseOptions;
   let retries = 0;
   
   while (retries < MAX_RETRIES) {
     try {
-      await mongoose.connect(MONGODB_URI, mongooseOptions);
+      await mongoose.connect(MONGODB_URI, options);
       console.log('Connected to MongoDB');
       return;
     } catch (error) {

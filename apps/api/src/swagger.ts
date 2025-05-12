@@ -1,5 +1,51 @@
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     TeeTime:
+ *       type: object
+ *       required:
+ *         - courseId
+ *         - courseName
+ *         - teeTime
+ *         - holes
+ *         - pricePerPlayer
+ *         - availableSlots
+ *       properties:
+ *         courseId:
+ *           type: string
+ *           description: MongoDB ObjectId of the course
+ *         courseName:
+ *           type: string
+ *           description: Name of the golf course
+ *         teeTime:
+ *           type: string
+ *           format: date-time
+ *           description: Scheduled tee time
+ *         holes:
+ *           type: integer
+ *           enum: [9, 18]
+ *           description: Number of holes
+ *         pricePerPlayer:
+ *           type: number
+ *           description: Price per player in dollars
+ *         availableSlots:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 4
+ *           description: Number of available slots
+ *         courseUrl:
+ *           type: string
+ *           format: uri
+ *           description: URL of the course website
+ *         courseAddress:
+ *           type: string
+ *           description: Physical address of the course
+ *         timezone:
+ *           type: string
+ *           description: IANA timezone of the course
+ *
+ * @swagger
  * /search:
  *   get:
  *     summary: Search for tee times

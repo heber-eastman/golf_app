@@ -18,6 +18,8 @@
     "@types/passport": "^1.0.16",
     "@types/passport-apple": "^2.0.3",
     "@types/passport-google-oauth20": "^2.0.14",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "cors": "^2.8.5",
     "date-fns": "^3.6.0",
     "date-fns-tz": "^2.0.1",
@@ -32,6 +34,8 @@
     "passport": "^0.7.0",
     "passport-apple": "^2.0.2",
     "passport-google-oauth20": "^2.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {

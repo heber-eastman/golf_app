@@ -101,6 +101,7 @@ router.get('/search', async (req, res) => {
       hasMore,
       nextCursor,
     });
+    return;
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Invalid search parameters', details: error.errors });
@@ -113,6 +114,7 @@ router.get('/search', async (req, res) => {
     }
     console.error('Search error:', error);
     res.status(500).json({ error: 'Error searching tee times' });
+    return;
   }
 });
 
