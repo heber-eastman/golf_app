@@ -79,12 +79,12 @@
 ---
 
 ## 6 · /​search API
-- [ ] GET `/search` params: `date`, `courseId?`, `maxPrice?`, `slots?`, `startTime?`, `endTime?`, `cursor?`
-- [ ] Zod validation
-- [ ] Query TeeTime collection; filters
-- [ ] Sort ascending, limit 20, `nextCursor`
-- [ ] Integration tests with seeded data
-- [ ] Swagger docs updated
+- [x] GET `/search` params: `date`, `courseId?`, `maxPrice?`, `slots?`, `startTime?`, `endTime?`, `cursor?`
+- [x] Zod validation
+- [x] Query TeeTime collection; filters
+- [x] Sort ascending, limit 20, `nextCursor`
+- [x] Integration tests with seeded data
+- [x] Swagger docs updated
 
 ---
 
