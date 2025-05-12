@@ -6,6 +6,7 @@ import { requireAuth } from '../middleware/auth';
 import { isAdmin } from '../middleware/admin';
 import { Course, TeeTime, UploadBatch } from '@golf-app/common';
 import { z } from 'zod';
+import mongoose from 'mongoose';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -58,14 +59,19 @@ router.post('/upload',
     const parser = parse({ headers: true });
 
     try {
+      // Add a Set to track seen (courseId, teeTime) pairs
+      const seen = new Set();
       for await (const row of stream.pipe(parser)) {
+        console.log('Processing row:', row);
         // Skip empty rows
         if (Object.keys(row).length === 0) {
+          console.log('Skipping empty row');
           continue;
         }
 
         // Handle malformed rows
         if (Object.keys(row).length !== REQUIRED_HEADERS.length) {
+          console.log('Skipping malformed row:', row);
           batch.skippedCount++;
           batch.validationErrors.push({
             row: batch.importedCount + batch.skippedCount,
@@ -75,12 +81,34 @@ router.post('/upload',
         }
 
         try {
-          // Parse and validate row
+          // Parse and validate row first
           const data = csvRowSchema.parse(row);
+          // Deduplication: skip if already seen in this batch
+          const dedupKey = `${data.courseId}|${data.teeTime.toISOString()}`;
+          if (seen.has(dedupKey)) {
+            continue;
+          }
+          seen.add(dedupKey);
+          console.log('Parsed and validated row:', data);
+
+          // Convert courseId to ObjectId after validation
+          let courseObjectId: mongoose.Types.ObjectId;
+          try {
+            courseObjectId = new mongoose.Types.ObjectId(data.courseId);
+            console.log('Converted courseId to ObjectId:', courseObjectId);
+          } catch (e) {
+            console.error('Invalid courseId:', data.courseId, e);
+            batch.skippedCount++;
+            batch.validationErrors.push({
+              row: batch.importedCount + batch.skippedCount,
+              message: 'Invalid courseId: not a valid ObjectId',
+            });
+            continue;
+          }
 
           // Upsert course
           const course = await Course.findOneAndUpdate(
-            { _id: data.courseId },
+            { _id: courseObjectId },
             {
               name: data.courseName,
               bookingUrl: data.bookingUrl,
@@ -90,12 +118,14 @@ router.post('/upload',
             },
             { upsert: true, new: true }
           );
+          console.log('Upserted course:', course);
 
           // Check if tee time already exists
           const existingTeeTime = await TeeTime.findOne({
             courseId: course._id,
             teeTime: data.teeTime,
           });
+          console.log('Existing tee time:', existingTeeTime);
 
           if (existingTeeTime) {
             // Update existing tee time
@@ -110,6 +140,8 @@ router.post('/upload',
                 availableSlots: data.availableSlots,
               }
             );
+            batch.importedCount++;
+            console.log('Updated existing tee time');
           } else {
             // Create new tee time
             await TeeTime.create({
@@ -120,8 +152,10 @@ router.post('/upload',
               availableSlots: data.availableSlots,
             });
             batch.importedCount++;
+            console.log('Created new tee time');
           }
         } catch (error) {
+          console.error('Error processing row:', error);
           batch.skippedCount++;
           batch.validationErrors.push({
             row: batch.importedCount + batch.skippedCount,
@@ -131,6 +165,7 @@ router.post('/upload',
       }
 
       await batch.save();
+      console.log('Batch saved:', batch);
 
       res.json({
         success: true,
@@ -142,6 +177,7 @@ router.post('/upload',
         },
       });
     } catch (error) {
+      console.error('Error processing CSV:', error);
       res.status(500).json({
         error: 'Error processing CSV',
         message: error instanceof Error ? error.message : 'Unknown error',

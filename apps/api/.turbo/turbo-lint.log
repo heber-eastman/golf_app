@@ -15,3 +15,18 @@ YOUR TYPESCRIPT VERSION: 5.8.3
 Please only submit bug reports when using the officially supported version.
 
 =============
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/apps/api/src/routes/__tests__/search.test.ts[24m[0m
+[0m  [2m43:9[22m  [31merror[39m  'teeTimes' is never reassigned. Use 'const' instead  [2mprefer-const[22m[0m
+[0m[0m
+[0m[4m/Users/heber/Documents/Codes/Golf App V0.1/apps/api/src/routes/search.ts[24m[0m
+[0m  [2m22:33[22m  [31merror[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[31m[1m✖ 2 problems (2 errors, 0 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[31m[1m  1 error and 0 warnings potentially fixable with the `--fix` option.[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+[37;40mnpm[0m [0m[31;40mERR![0m [0m[35mLifecycle script `lint` failed with error:[0m 
+[0m[37;40mnpm[0m [0m[31;40mERR![0m [0m[35mError: command failed[0m 
+[0m[37;40mnpm[0m [0m[31;40mERR![0m [0m[35m  in workspace: @golf-app/api@0.1.0[0m 
+[0m[37;40mnpm[0m [0m[31;40mERR![0m [0m[35m  at location: /Users/heber/Documents/Codes/Golf App V0.1/apps/api[0m 
+[0m

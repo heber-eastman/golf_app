@@ -7,6 +7,7 @@ import authRoutes from './routes/auth';
 import uploadRoutes from './routes/upload';
 import { errorHandler } from './middleware/error';
 import { startUploadCheckScheduler } from './jobs/adminAlert';
+import searchRouter from './routes/search';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.use(passport.initialize());
 // Routes
 app.use('/auth', authRoutes);
 app.use('/admin', uploadRoutes);
+app.use('/', searchRouter);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
