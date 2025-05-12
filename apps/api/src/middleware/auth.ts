@@ -58,4 +58,6 @@ export const requireAdmin = (
     return res.status(403).json({ message: 'Admin access required' });
   }
   next();
-}; 
+};
+
+export const requireAuth = authenticate; 
