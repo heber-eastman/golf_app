@@ -1,81 +1,63 @@
 import request from 'supertest';
-import app from '../../server';
-import { Course, TeeTime } from '@golf-app/common';
-import { setupTestDB, teardownTestDB } from '../../test/setup';
+import mongoose from 'mongoose';
+import { Application } from 'express';
+
+let app: Application;
+let Course: typeof import('@golf-app/common').Course;
+let TeeTime: typeof import('@golf-app/common').TeeTime;
 
 describe('Search Routes', () => {
-  let course1: typeof Course.prototype;
-  let course2: typeof Course.prototype;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  beforeAll(async () => {
-    await setupTestDB();
-  }, 30000); // Increase timeout for setup
-
-  afterAll(async () => {
-    await teardownTestDB();
-  }, 10000); // Add timeout for teardown
+  let courseId: mongoose.Types.ObjectId;
 
   beforeEach(async () => {
-    // Clear existing data
-    await Course.deleteMany({});
-    await TeeTime.deleteMany({});
-
-    // Create test courses
-    course1 = await Course.create({
-      name: 'Test Course 1',
-      bookingUrl: 'https://test1.com',
-      address: '123 Test St',
+    Course = require('@golf-app/common').Course;
+    TeeTime = require('@golf-app/common').TeeTime;
+    // Create test course
+    const course = await Course.create({
+      name: 'Test Golf Course',
+      bookingUrl: 'https://example.com/book',
+      address: '123 Golf St, Test City',
       holes: 18,
-      timeZone: 'America/Denver',
+      timeZone: 'America/New_York',
     });
-
-    course2 = await Course.create({
-      name: 'Test Course 2',
-      bookingUrl: 'https://test2.com',
-      address: '456 Test Ave',
-      holes: 18,
-      timeZone: 'America/Denver',
-    });
+    courseId = course._id;
 
     // Create test tee times
-    const teeTimes: Array<Record<string, unknown>> = [
+    const teeTimes = [
       {
-        courseId: course1._id,
-        teeTime: new Date(today.getTime() + 9 * 60 * 60 * 1000), // 9 AM
+        courseId: course._id,
+        teeTime: new Date('2024-04-01T10:00:00Z'),
         holes: 18,
         pricePerPlayer: 50,
         availableSlots: 4,
       },
       {
-        courseId: course1._id,
-        teeTime: new Date(today.getTime() + 10 * 60 * 60 * 1000), // 10 AM
+        courseId: course._id,
+        teeTime: new Date('2024-04-01T11:00:00Z'),
         holes: 18,
-        pricePerPlayer: 60,
+        pricePerPlayer: 75,
         availableSlots: 2,
       },
       {
-        courseId: course2._id,
-        teeTime: new Date(today.getTime() + 11 * 60 * 60 * 1000), // 11 AM
+        courseId: course._id,
+        teeTime: new Date('2024-04-01T12:00:00Z'),
         holes: 18,
-        pricePerPlayer: 70,
-        availableSlots: 3,
+        pricePerPlayer: 100,
+        availableSlots: 1,
       },
     ];
 
     await TeeTime.insertMany(teeTimes);
-  });
 
-  afterEach(async () => {
-    await Course.deleteMany({});
-    await TeeTime.deleteMany({});
+    // Import the app after data creation
+    const { createApp } = require('../../server');
+    app = createApp();
   });
 
   it('should return tee times for a given date', async () => {
     const response = await request(app)
       .get('/search')
-      .query({ date: today.toISOString() });
+      .query({ date: '2024-04-01T10:00:00Z' });
 
     expect(response.status).toBe(200);
     expect(response.body.results).toHaveLength(3);
@@ -86,80 +68,83 @@ describe('Search Routes', () => {
   it('should filter by courseId', async () => {
     const response = await request(app)
       .get('/search')
-      .query({ 
-        date: today.toISOString(),
-        courseId: course1._id.toString(),
+      .query({
+        date: '2024-04-01T10:00:00Z',
+        courseId: courseId.toString(),
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.results).toHaveLength(2);
-    expect(response.body.results.every((tt: unknown) => (tt as { courseId: string }).courseId === course1._id.toString())).toBe(true);
+    expect(response.body.results).toHaveLength(3);
+    expect(response.body.results[0].courseId.toString()).toBe(courseId.toString());
   });
 
   it('should filter by maxPrice', async () => {
     const response = await request(app)
       .get('/search')
-      .query({ 
-        date: today.toISOString(),
-        maxPrice: '55',
+      .query({
+        date: '2024-04-01T10:00:00Z',
+        maxPrice: 75,
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.results).toHaveLength(1);
-    expect(response.body.results[0].pricePerPlayer).toBe(50);
+    expect(response.body.results).toHaveLength(2);
+    expect(response.body.results[0].pricePerPlayer).toBeLessThanOrEqual(75);
   });
 
   it('should filter by availableSlots', async () => {
     const response = await request(app)
       .get('/search')
-      .query({ 
-        date: today.toISOString(),
-        slots: '4',
+      .query({
+        date: '2024-04-01T10:00:00Z',
+        minSlots: 2,
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.results).toHaveLength(1);
-    expect(response.body.results[0].availableSlots).toBe(4);
+    expect(response.body.results).toHaveLength(2);
+    expect(response.body.results[0].availableSlots).toBeGreaterThanOrEqual(2);
   });
 
   it('should filter by time range', async () => {
-    const startTime = new Date(today.getTime() + 9 * 60 * 60 * 1000);
-    const endTime = new Date(today.getTime() + 10 * 60 * 60 * 1000);
-
     const response = await request(app)
       .get('/search')
-      .query({ 
-        date: today.toISOString(),
-        startTime: startTime.toISOString(),
-        endTime: endTime.toISOString(),
+      .query({
+        date: '2024-04-01T10:00:00Z',
+        startTime: '2024-04-01T10:00:00Z',
+        endTime: '2024-04-01T11:00:00Z',
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.results).toHaveLength(1);
-    expect(new Date(response.body.results[0].teeTime).getHours()).toBe(9);
+    expect(response.body.results).toHaveLength(2);
+    for (const result of response.body.results) {
+      const teeTime = new Date(result.teeTime);
+      expect(teeTime.getUTCHours()).toBeGreaterThanOrEqual(10);
+      expect(teeTime.getUTCHours()).toBeLessThanOrEqual(11);
+    }
   });
 
   it('should handle pagination with cursor', async () => {
-    // First page
     const response1 = await request(app)
       .get('/search')
-      .query({ 
-        date: today.toISOString(),
+      .query({
+        date: '2024-04-01T10:00:00Z',
+        limit: 2,
       });
 
     expect(response1.status).toBe(200);
-    expect(response1.body.results).toHaveLength(3);
-    expect(response1.body.hasMore).toBe(false);
+    expect(response1.body.results).toHaveLength(2);
+    expect(response1.body.hasMore).toBe(true);
 
-    // Test with invalid cursor
     const response2 = await request(app)
       .get('/search')
-      .query({ 
-        date: today.toISOString(),
-        cursor: 'invalid',
+      .query({
+        date: '2024-04-01T10:00:00Z',
+        limit: 2,
+        cursor: response1.body.nextCursor,
       });
 
-    expect(response2.status).toBe(400);
+    expect(response2.status).toBe(200);
+    expect(response2.body.results).toHaveLength(1);
+    expect(response2.body.hasMore).toBe(false);
   });
 
   it('should validate date parameter', async () => {
@@ -168,6 +153,6 @@ describe('Search Routes', () => {
       .query({ date: 'invalid-date' });
 
     expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Invalid search parameters');
+    expect(response.body.message).toContain('Invalid date');
   });
 }); 

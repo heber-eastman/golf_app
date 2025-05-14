@@ -8,10 +8,11 @@ const searchParamsSchema = z.object({
   date: z.string().transform(str => new Date(str)).refine(d => !isNaN(d.getTime()), { message: 'Invalid date' }),
   courseId: z.string().optional(),
   maxPrice: z.string().transform(str => parseFloat(str)).optional(),
-  slots: z.string().transform(str => parseInt(str, 10)).optional(),
+  minSlots: z.string().transform(str => parseInt(str, 10)).optional(),
   startTime: z.string().transform(str => new Date(str)).refine(d => !isNaN(d.getTime()), { message: 'Invalid date' }).optional(),
   endTime: z.string().transform(str => new Date(str)).refine(d => !isNaN(d.getTime()), { message: 'Invalid date' }).optional(),
   cursor: z.string().optional(),
+  limit: z.string().transform(str => parseInt(str, 10)).optional(),
 });
 
 router.get('/search', async (req, res) => {
@@ -19,12 +20,20 @@ router.get('/search', async (req, res) => {
     const params = searchParamsSchema.parse(req.query);
     
     // Build query
-    const query: Record<string, unknown> = {
-      teeTime: {
+    const query: Record<string, unknown> = {};
+
+    // Set date range
+    if (params.startTime && params.endTime) {
+      query.teeTime = {
+        $gte: new Date(params.startTime),
+        $lte: new Date(params.endTime),
+      };
+    } else {
+      query.teeTime = {
         $gte: new Date(params.date.setHours(0, 0, 0, 0)),
-        $lt: new Date(params.date.setHours(23, 59, 59, 999)),
-      }
-    };
+        $lte: new Date(params.date.setHours(23, 59, 59, 999)),
+      };
+    }
 
     if (params.courseId) {
       query.courseId = params.courseId;
@@ -34,16 +43,8 @@ router.get('/search', async (req, res) => {
       query.pricePerPlayer = { $lte: params.maxPrice };
     }
 
-    if (params.slots) {
-      query.availableSlots = { $gte: params.slots };
-    }
-
-    if (params.startTime) {
-      (query.teeTime as { $gte: Date; $lt: Date }).$gte = params.startTime;
-    }
-
-    if (params.endTime) {
-      (query.teeTime as { $gte: Date; $lt: Date }).$lt = params.endTime;
+    if (params.minSlots) {
+      query.availableSlots = { $gte: params.minSlots };
     }
 
     // Get total count for pagination
@@ -57,21 +58,22 @@ router.get('/search', async (req, res) => {
         const teeTime = new Date(teeTimeStr);
         // Validate cursor fields
         if (!teeTimeStr || !courseId || isNaN(teeTime.getTime())) {
-          return res.status(400).json({ error: 'Invalid cursor format' });
+          return res.status(400).json({ message: 'Invalid cursor format' });
         }
         query.$or = [
           { teeTime: { $gt: teeTime } },
           { teeTime, courseId: { $gt: courseId } }
         ];
       } catch (e) {
-        return res.status(400).json({ error: 'Invalid cursor format' });
+        return res.status(400).json({ message: 'Invalid cursor format' });
       }
     }
 
     // Execute query with deduplication
+    const limit = params.limit || 20;
     const teeTimes = await TeeTime.find(query)
       .sort({ teeTime: 1, courseId: 1 })
-      .limit(21) // Get one extra to check if there are more results
+      .limit(limit * 2) // Get more results to account for potential duplicates
       .lean();
 
     // Deduplicate by courseId + teeTime
@@ -83,9 +85,9 @@ router.get('/search', async (req, res) => {
       return true;
     });
 
-    // Check if there are more results
-    const hasMore = uniqueTeeTimes.length > 20;
-    const results = uniqueTeeTimes.slice(0, 20);
+    // Always slice to the requested limit after deduplication
+    const results = uniqueTeeTimes.slice(0, limit);
+    const hasMore = uniqueTeeTimes.length > limit;
 
     // Build next cursor
     let nextCursor: string | undefined;
@@ -104,16 +106,17 @@ router.get('/search', async (req, res) => {
     return;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid search parameters', details: error.errors });
+      const message = error.errors[0]?.message || 'Invalid search parameters';
+      return res.status(400).json({ message });
     }
     if (error instanceof Error && error.message.includes('Invalid cursor format')) {
-      return res.status(400).json({ error: 'Invalid cursor format' });
+      return res.status(400).json({ message: 'Invalid cursor format' });
     }
     if (error instanceof Error && error.message.includes('Invalid date')) {
-      return res.status(400).json({ error: 'Invalid date format' });
+      return res.status(400).json({ message: 'Invalid date format' });
     }
     console.error('Search error:', error);
-    res.status(500).json({ error: 'Error searching tee times' });
+    res.status(500).json({ message: 'Error searching tee times' });
     return;
   }
 });

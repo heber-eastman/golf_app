@@ -89,13 +89,13 @@
 ---
 
 ## 7 · Push Notifications
-- [ ] Firebase Cloud Messaging setup
-- [ ] Device token model + registration route
-- [ ] `NotificationPref` schema
-- [ ] `/notifications/prefs` CRUD
-- [ ] Worker (5 min) → query new tee‑times → send FCM
-- [ ] Frequency throttle (immediate/daily/weekly)
-- [ ] Unit tests on worker logic
+- [x] Firebase Cloud Messaging setup
+- [x] Device token model + registration route
+- [x] `NotificationPref` schema
+- [x] `/notifications/prefs` CRUD
+- [x] Worker (5 min) → query new tee‑times → send FCM
+- [x] Frequency throttle (immediate/daily/weekly)
+- [x] Unit tests on worker logic
 
 ---
 

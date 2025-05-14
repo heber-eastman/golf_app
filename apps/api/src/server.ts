@@ -4,71 +4,89 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
-import passport from './config/passport';
-import authRoutes from './routes/auth';
-import uploadRoutes from './routes/upload';
-import { errorHandler } from './middleware/error';
-import { startUploadCheckScheduler } from './jobs/adminAlert';
-import searchRouter from './routes/search';
 
-const app = express();
+// Do not import routes/middleware/models here!
+
 const port = process.env.PORT || 3000;
 
-// Swagger setup
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Golf App API',
-      version: '1.0.0',
-      description: 'API for managing golf tee times',
-    },
-    servers: [
-      {
-        url: `http://localhost:${port}`,
-        description: 'Development server',
+export function createApp() {
+  const app = express();
+
+  // Swagger setup
+  const swaggerOptions = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'Golf App API',
+        version: '1.0.0',
+        description: 'API for managing golf tee times',
       },
+      servers: [
+        {
+          url: `http://localhost:${port}`,
+          description: 'Development server',
+        },
+      ],
+    },
+    apis: [
+      `${__dirname}/routes/*.ts`,
+      `${__dirname}/swagger.ts`
     ],
-  },
-  apis: [
-    `${__dirname}/routes/*.ts`,
-    `${__dirname}/swagger.ts`
-  ],
-};
+  };
 
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  const swaggerSpec = swaggerJsdoc(swaggerOptions);
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Middleware
-app.use(helmet());
-app.use(cors());
-app.use(morgan('dev'));
-app.use(express.json());
+  // Middleware
+  app.use(helmet());
+  app.use(cors());
+  app.use(morgan('dev'));
+  app.use(express.json());
 
-// Routes
-app.use('/auth', passport.initialize(), authRoutes);
-app.use('/admin', uploadRoutes);
-app.use('/', searchRouter);
+  // Import routes and middleware after DB/models are ready
+  const passport = require('./config/passport').default;
+  const authRoutes = require('./routes/auth').default;
+  const uploadRoutes = require('./routes/upload').default;
+  const { errorHandler } = require('./middleware/error');
+  const { startUploadCheckScheduler } = require('./jobs/adminAlert');
+  const { startNotificationWorker } = require('./jobs/notificationWorker');
+  const searchRouter = require('./routes/search').default;
+  const notificationsRouter = require('./routes/notifications').default;
+  const deviceTokensRouter = require('./routes/deviceTokens').default;
 
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
+  // Routes
+  app.use('/auth', passport.initialize(), authRoutes);
+  app.use('/admin', uploadRoutes);
+  app.use('/', searchRouter);
+  app.use('/notifications', notificationsRouter);
+  app.use('/device-tokens', deviceTokensRouter);
 
-// Error handling
-app.use(errorHandler);
+  app.get('/health', (req, res) => {
+    res.json({ status: 'ok' });
+  });
 
-// Start the upload check scheduler
-startUploadCheckScheduler();
+  // Error handling
+  app.use(errorHandler);
 
-// 404 handler
-app.use((req: express.Request, res: express.Response) => {
-  res.status(404).json({ error: 'Not Found' });
-});
+  // Start the schedulers
+  startUploadCheckScheduler();
+  startNotificationWorker();
 
+  // 404 handler
+  app.all('*', (req, res) => {
+    res.status(404).json({ error: 'Not Found' });
+  });
+
+  return app;
+}
+
+// For production usage
+let app: express.Express | undefined = undefined;
 if (require.main === module) {
+  app = createApp();
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
 }
 
-export default app; 
+export default app || createApp(); 

@@ -1,12 +1,13 @@
-import { Router, Request } from 'express';
+import { Router, Request, Response, RequestHandler } from 'express';
 import multer from 'multer';
 import { parse } from 'fast-csv';
 import { Readable } from 'stream';
 import { requireAuth } from '../middleware/auth';
 import { isAdmin } from '../middleware/admin';
-import { Course, TeeTime, UploadBatch } from '@golf-app/common';
+import { Course, TeeTime, UploadBatch, User } from '@golf-app/common';
 import { z } from 'zod';
 import mongoose from 'mongoose';
+import { IUser } from '@golf-app/common/src/models/User';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -35,17 +36,20 @@ const REQUIRED_HEADERS = [
   'timeZone',
 ];
 
-interface UploadRequest extends Request {
-  file?: Express.Multer.File;
+type UserDocument = IUser & mongoose.Document;
+
+interface AuthRequest extends Request {
+  user?: UserDocument;
 }
 
+// @ts-expect-error: Custom user property on request causes type incompatibility with Express types
 router.post('/upload',
   requireAuth,
   isAdmin,
   upload.single('file'),
-  async (req: UploadRequest, res) => {
+  (async (req: AuthRequest, res: Response) => {
     if (!req.file) {
-      res.status(400).json({ error: 'No file uploaded' });
+      res.status(400).json({ message: 'No file uploaded' });
       return;
     }
 
@@ -62,8 +66,12 @@ router.post('/upload',
     try {
       // Add a Set to track seen (courseId, teeTime) pairs
       const seen = new Set();
+      let rowCount = 0;
+
       for await (const row of stream.pipe(parser)) {
+        rowCount++;
         console.log('Processing row:', row);
+
         // Skip empty rows
         if (Object.keys(row).length === 0) {
           console.log('Skipping empty row');
@@ -75,7 +83,7 @@ router.post('/upload',
           console.log('Skipping malformed row:', row);
           batch.skippedCount++;
           batch.validationErrors.push({
-            row: batch.importedCount + batch.skippedCount,
+            row: rowCount,
             message: 'Invalid number of columns',
           });
           continue;
@@ -84,24 +92,27 @@ router.post('/upload',
         try {
           // Parse and validate row first
           const data = csvRowSchema.parse(row);
+
           // Deduplication: skip if already seen in this batch
           const dedupKey = `${data.courseId}|${data.teeTime.toISOString()}`;
           if (seen.has(dedupKey)) {
+            batch.skippedCount++;
+            batch.validationErrors.push({
+              row: rowCount,
+              message: 'Duplicate tee time',
+            });
             continue;
           }
           seen.add(dedupKey);
-          console.log('Parsed and validated row:', data);
 
           // Convert courseId to ObjectId after validation
           let courseObjectId: mongoose.Types.ObjectId;
           try {
             courseObjectId = new mongoose.Types.ObjectId(data.courseId);
-            console.log('Converted courseId to ObjectId:', courseObjectId);
           } catch (e) {
-            console.error('Invalid courseId:', data.courseId, e);
             batch.skippedCount++;
             batch.validationErrors.push({
-              row: batch.importedCount + batch.skippedCount,
+              row: rowCount,
               message: 'Invalid courseId: not a valid ObjectId',
             });
             continue;
@@ -119,14 +130,12 @@ router.post('/upload',
             },
             { upsert: true, new: true }
           );
-          console.log('Upserted course:', course);
 
           // Check if tee time already exists
           const existingTeeTime = await TeeTime.findOne({
             courseId: course._id,
             teeTime: data.teeTime,
           });
-          console.log('Existing tee time:', existingTeeTime);
 
           if (existingTeeTime) {
             // Update existing tee time
@@ -142,7 +151,6 @@ router.post('/upload',
               }
             );
             batch.importedCount++;
-            console.log('Updated existing tee time');
           } else {
             // Create new tee time
             await TeeTime.create({
@@ -153,13 +161,12 @@ router.post('/upload',
               availableSlots: data.availableSlots,
             });
             batch.importedCount++;
-            console.log('Created new tee time');
           }
         } catch (error) {
           console.error('Error processing row:', error);
           batch.skippedCount++;
           batch.validationErrors.push({
-            row: batch.importedCount + batch.skippedCount,
+            row: rowCount,
             message: error instanceof Error ? error.message : 'Unknown error',
           });
         }
@@ -181,12 +188,12 @@ router.post('/upload',
     } catch (error) {
       console.error('Error processing CSV:', error);
       res.status(500).json({
-        error: 'Error processing CSV',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: 'Error processing CSV',
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
       return;
     }
-  }
+  }) as unknown as RequestHandler
 );
 
 export default router; 

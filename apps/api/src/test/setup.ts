@@ -1,4 +1,6 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { setupTestDB, clearTestDB, teardownTestDB } from '@golf-app/common/src/test/setup';
+import { User, IUser } from '@golf-app/common';
+import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 
 // Mock environment variables
@@ -12,51 +14,73 @@ process.env.APPLE_KEY_ID = 'test-apple-key-id';
 process.env.APPLE_PRIVATE_KEY = 'test-apple-private-key';
 process.env.AUTH_CALLBACK_URL = 'http://localhost:3000/auth/callback';
 
-let mongod: MongoMemoryServer;
-
-// Track if we've already set up the connection
-let isConnected = false;
-
-export async function setupTestDB() {
-  if (isConnected) {
-    return;
-  }
-
-  mongod = await MongoMemoryServer.create();
-  const uri = mongod.getUri();
-  
-  // Disconnect any existing connection
-  if (mongoose.connection.readyState !== 0) {
-    await mongoose.disconnect();
-  }
-  
-  await mongoose.connect(uri);
-  isConnected = true;
-}
-
-export async function teardownTestDB() {
-  if (!isConnected) {
-    return;
-  }
-
-  await mongoose.disconnect();
-  await mongod.stop();
-  isConnected = false;
-}
+// Global test variables
+export let testUser: IUser & mongoose.Document;
+export let testAdminUser: IUser & mongoose.Document;
+export let testUserToken: string;
+export let testAdminToken: string;
 
 beforeAll(async () => {
-  await setupTestDB();
-}, 30000); // Increase timeout for setup
+  try {
+    // Set up test database
+    await setupTestDB();
+
+    // Create test users
+    testUser = await User.create({
+      email: 'test@example.com',
+      name: 'Test User',
+    });
+
+    testAdminUser = await User.create({
+      email: 'admin@example.com',
+      name: 'Admin User',
+      isAdmin: true,
+    });
+
+    // Generate tokens
+    testUserToken = jwt.sign(
+      { id: testUser._id },
+      process.env.JWT_SECRET!,
+      { expiresIn: '1h' }
+    );
+
+    testAdminToken = jwt.sign(
+      { id: testAdminUser._id },
+      process.env.JWT_SECRET!,
+      { expiresIn: '1h' }
+    );
+
+    // Verify users were created
+    const foundUser = await User.findById(testUser._id);
+    const foundAdmin = await User.findById(testAdminUser._id);
+
+    if (!foundUser || !foundAdmin) {
+      throw new Error('Failed to create test users');
+    }
+  } catch (error) {
+    console.error('Error in test setup:', error);
+    throw error;
+  }
+}, 30000);
 
 afterEach(async () => {
-  if (mongoose.connection.db) {
-    const collections = await mongoose.connection.db.collections();
-    for (const collection of collections) {
-      await collection.deleteMany({});
-    }
+  try {
+    // Clear any test data that might have been created during tests
+    await clearTestDB();
+  } catch (error) {
+    console.error('Error in test cleanup:', error);
+    throw error;
   }
-}, 10000); // Add timeout for cleanup
+});
 
 afterAll(async () => {
-  await teardownTestDB();
-}, 10000); // Add timeout for teardown 
+  try {
+    // Clean up test users
+    if (testUser) await User.findByIdAndDelete(testUser._id);
+    if (testAdminUser) await User.findByIdAndDelete(testAdminUser._id);
+    await teardownTestDB();
+  } catch (error) {
+    console.error('Error in final cleanup:', error);
+    throw error;
+  }
+}, 30000); 

@@ -37,4 +37,4 @@ const userSchema = new mongoose.Schema<IUser>({
 userSchema.index({ googleId: 1 }, { sparse: true });
 userSchema.index({ appleId: 1 }, { sparse: true });
 
-export const User = mongoose.model<IUser>('User', userSchema); 
+export const User = mongoose.models.User || mongoose.model<IUser>('User', userSchema); 
