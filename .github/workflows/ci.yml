@@ -36,7 +36,7 @@ jobs:
     - name: Set up Firebase service account
       run: |
         mkdir -p apps/api/config
-        echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > apps/api/config/golf-app-27b4b-firebase-adminsdk-fbsvc-8dbba234ee.json
+        echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > apps/api/config/golf-app-27b4b-firebase-adminsdk-fbsvc-8dbba234ee.json
     
     - name: Run tests
       run: |
