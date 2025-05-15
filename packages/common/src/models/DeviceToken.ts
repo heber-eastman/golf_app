@@ -33,7 +33,6 @@ const deviceTokenSchema = new mongoose.Schema<IDeviceToken>({
 
 // Indexes for efficient querying
 deviceTokenSchema.index({ userId: 1 });
-deviceTokenSchema.index({ token: 1 }, { unique: true });
 
 export function registerDeviceTokenModel(conn: mongoose.Connection) {
   if (conn.models.DeviceToken) {

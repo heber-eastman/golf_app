@@ -155,4 +155,8 @@ describe('Search Routes', () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toContain('Invalid date');
   });
+});
+
+afterAll(async () => {
+  await mongoose.connection.close();
 }); 

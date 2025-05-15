@@ -75,9 +75,10 @@ afterEach(async () => {
 
 afterAll(async () => {
   try {
-    // Clean up test users
+    // Clean up test users before disconnecting
     if (testUser) await User.findByIdAndDelete(testUser._id);
     if (testAdminUser) await User.findByIdAndDelete(testAdminUser._id);
+    // Then tear down the test database
     await teardownTestDB();
   } catch (error) {
     console.error('Error in final cleanup:', error);

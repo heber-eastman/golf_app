@@ -134,4 +134,8 @@ describe('Notification Preferences API', () => {
       expect(response.status).toBe(404);
     });
   });
+});
+
+afterAll(async () => {
+  await mongoose.connection.close();
 }); 

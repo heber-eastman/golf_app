@@ -3,6 +3,7 @@ import app from '../../server';
 import { User } from '@golf-app/common';
 import jwt from 'jsonwebtoken';
 import { authConfig } from '../../config/auth';
+import mongoose from 'mongoose';
 
 describe('Auth Routes', () => {
   beforeEach(async () => {
@@ -49,4 +50,8 @@ describe('Auth Routes', () => {
       expect(response.header.location).toContain('appleid.apple.com');
     });
   });
+});
+
+afterAll(async () => {
+  await mongoose.connection.close();
 }); 
