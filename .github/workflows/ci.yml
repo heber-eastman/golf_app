@@ -28,11 +28,6 @@ jobs:
         cd ../../apps/api
         npm ci
     
-    - name: Install libssl3
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libssl3 libcrypto3
-
     - name: Set up Firebase service account
       run: |
         mkdir -p apps/api/config
