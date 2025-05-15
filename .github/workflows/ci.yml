@@ -31,7 +31,7 @@ jobs:
     - name: Install libssl3
       run: |
         sudo apt-get update
-        sudo apt-get install -y libssl3
+        sudo apt-get install -y libssl3 libcrypto1.1
 
     - name: Set up Firebase service account
       run: |
